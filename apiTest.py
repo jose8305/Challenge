@@ -2,12 +2,11 @@ from fastapi import FastAPI
 import pandas as pd
 import pyodbc
 from azure.storage.blob import BlobServiceClient
-from io import StringIO
+from io import StringIO, BytesIO
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, select, DateTime, text
 from sqlalchemy.orm import sessionmaker
 import urllib
 import fastavro
-from io import BytesIO
 
 # Inicializa la app FastAPI
 app = FastAPI()
