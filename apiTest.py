@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import APIKeyHeader
 import pandas as pd
 import pyodbc
 from azure.storage.blob import BlobServiceClient
@@ -10,6 +11,18 @@ import fastavro
 
 # Inicializa la app FastAPI
 app = FastAPI()
+
+# Seguridad: Definir una clave API
+API_KEY = "M423KL4z"
+api_key_header = APIKeyHeader(name="X-API-KEY")
+
+# Función para verificar la clave API
+def verify_api_key(api_key: str = Depends(api_key_header)):
+    if api_key != API_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Clave API no válida",
+        )
 
 # Configura la conexión a Azure Blob Storage
 AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=cs210032000920bcfba;AccountKey=ZXutJVGegmMjPPq7ToEr0pZyTGalWka/JUTv8n4m5Sz5v8blHFnhzbqeGoLUgd4FkxTM7+QPLaDQsfTILCDysQ==;EndpointSuffix=core.windows.net"
@@ -190,7 +203,7 @@ def insert_data_master(df,masterTable):
     session.close() 
 
 # Insertar datos de empleados
-@app.post("/insert_hired_employees")
+@app.post("/insert_hired_employees", dependencies=[Depends(verify_api_key)])
 def insert_hired_employees():
     #Crear tabla en la base de datos
     create_table_employees()
@@ -237,7 +250,7 @@ def insert_hired_employees():
         engine.dispose()
 
 #Insertar el maestro de departamentos
-@app.post("/insert_departments")
+@app.post("/insert_departments", dependencies=[Depends(verify_api_key)])
 def insert_departments():
     #Crear tabla en la base de datos
     create_table_departments()
@@ -253,7 +266,7 @@ def insert_departments():
     return {"message": f"Datos del archivo departments.csv procesados exitosamente"}
 
 #Insertar el maestro de trabajos
-@app.post("/insert_jobs")
+@app.post("/insert_jobs", dependencies=[Depends(verify_api_key)])
 def insert_jobs():
     #Crear tabla en la base de datos
     create_table_jobs()
@@ -269,7 +282,7 @@ def insert_jobs():
     return {"message": f"Datos del archivo jobs.csv procesados exitosamente"}
 
 #Crear backup de la tabla Employees
-@app.post("/create_backup_employees")
+@app.post("/create_backup_employees", dependencies=[Depends(verify_api_key)])
 def create_backup_employees():
     avro_schema = {
     "type": "record",
@@ -288,7 +301,7 @@ def create_backup_employees():
     return response
     
 #Crear backup de la tabla Departments
-@app.post("/create_backup_departments")
+@app.post("/create_backup_departments", dependencies=[Depends(verify_api_key)])
 def create_backup_departments():
     avro_schema = {
     "type": "record",
@@ -304,7 +317,7 @@ def create_backup_departments():
     return response
 
 #Crear backup de la tabla Jobs
-@app.post("/create_backup_jobs")
+@app.post("/create_backup_jobs", dependencies=[Depends(verify_api_key)])
 def create_backup_jobs():
     avro_schema = {
     "type": "record",
@@ -320,7 +333,7 @@ def create_backup_jobs():
     return response
 
 #Restaurar el backup de la tabla Employees
-@app.post("/restore_employees")
+@app.post("/restore_employees", dependencies=[Depends(verify_api_key)])
 def restore_employees():
     avro_file = "employees.avro"
     table_name = "Employees"
@@ -334,7 +347,7 @@ def restore_employees():
     return response
 
 #Restaurar el backup de la tabla Departments
-@app.post("/restore_departments")
+@app.post("/restore_departments", dependencies=[Depends(verify_api_key)])
 def restore_departments():
     avro_file = "departments.avro"
     table_name = "Departments"
@@ -344,7 +357,7 @@ def restore_departments():
     return response
 
 #Restaurar el backup de la tabla Departments
-@app.post("/restore_jobs")
+@app.post("/restore_jobs", dependencies=[Depends(verify_api_key)])
 def restore_jobs():
     avro_file = "jobs.avro"
     table_name = "Jobs"
