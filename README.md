@@ -42,51 +42,24 @@ Esta es una API construida con **FastAPI** que se conecta a una base de datos y 
 
 ## Ejecución
 
-Para iniciar la aplicación ve al siguiente link:
+Para iniciar la aplicación de desarrollo, ejecuta:
 
 ```bash
-http://20.22.36.209:8000/docs
+uvicorn apiTest:app --reload
 ```
+
+## Producción
+
+Para iniciar la aplicación ve al siguiente link: http://20.22.36.209:8000/docs
+
+Para ver el informe ve al siguiente link: https://app.powerbi.com/view?r=eyJrIjoiMjJhZGQ5YTEtYWM1OS00MzQ5LWI0OGMtN2IxNWVjYmJjOWM0IiwidCI6Ijc2YmNkNGY1LTBmMjUtNDZiNy1hN2IwLTlkY2U0OWFkMWJhYSIsImMiOjR9
+
 
 ## Diagrama de Arquitectura
 
-A continuación se muestra un diagrama de la arquitectura de la API:
+A continuación se muestra un diagrama de la arquitectura:
 
-```plantuml
-@startuml
-@startuml
-actor user
-
-node "Azure"{
-
-    database DBTest #00BEF2 {
-        card Departments
-        card Employees
-        card Jobs
-    }
-
-    package "Blob Storage"{
-        map filetest{
-            avro => csv
-        }
-    }
-
-    node "Container Instance"{
-        [apiTest.py]
-    }
-}
-
-
-user -> [apiTest.py]: http Request
-[apiTest.py] -> Departments: overwrite
-[apiTest.py] -> Employees: overwrite 
-[apiTest.py] -> Jobs: overwrite 
-[apiTest.py] --> filetest: read/write file
-Departments .> Employees
-Jobs ..> Employees
-@enduml
-@enduml
-```
+![Diagrama de Arquitectura](out/architecture/architecture.png)
 
 El diagrama describe el flujo de interacción entre el **Usuario**, la **API**, la **Base de Datos** y **Azure Blob Storage**.
 
