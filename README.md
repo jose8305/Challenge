@@ -46,3 +46,13 @@ Para iniciar la aplicación ve al siguiente link:
 
 ```bash
 http://20.22.36.209:8000/docs
+```
+
+## Diagrama de Arquitectura
+
+A continuación se muestra un diagrama de la arquitectura de la API:
+
+![Diagrama de Arquitectura](architecture.png)
+
+El diagrama describe el flujo de interacción entre el **Usuario**, la **API**, la **Base de Datos** y **Azure Blob Storage**.
+

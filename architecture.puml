@@ -1,0 +1,8 @@
+@startuml
+actor Usuario
+Usuario -> API: Solicitud HTTP (con API Key)
+API -> BaseDeDatos: Consultar/Modificar datos
+API -> AzureBlobStorage: Leer/Escribir archivos
+
+Usuario <- API: Respuesta HTTP
+@enduml
