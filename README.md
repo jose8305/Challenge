@@ -52,7 +52,41 @@ http://20.22.36.209:8000/docs
 
 A continuación se muestra un diagrama de la arquitectura de la API:
 
-![Diagrama de Arquitectura](architecture.png)
+```plantuml
+@startuml
+@startuml
+actor user
+
+node "Azure"{
+
+    database DBTest #00BEF2 {
+        card Departments
+        card Employees
+        card Jobs
+    }
+
+    package "Blob Storage"{
+        map filetest{
+            avro => csv
+        }
+    }
+
+    node "Container Instance"{
+        [apiTest.py]
+    }
+}
+
+
+user -> [apiTest.py]: http Request
+[apiTest.py] -> Departments: overwrite
+[apiTest.py] -> Employees: overwrite 
+[apiTest.py] -> Jobs: overwrite 
+[apiTest.py] --> filetest: read/write file
+Departments .> Employees
+Jobs ..> Employees
+@enduml
+@enduml
+```
 
 El diagrama describe el flujo de interacción entre el **Usuario**, la **API**, la **Base de Datos** y **Azure Blob Storage**.
 

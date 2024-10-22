@@ -1,8 +1,31 @@
 @startuml
-actor Usuario
-Usuario -> API: Solicitud HTTP (con API Key)
-API -> BaseDeDatos: Consultar/Modificar datos
-API -> AzureBlobStorage: Leer/Escribir archivos
+actor user
 
-Usuario <- API: Respuesta HTTP
+node "Azure"{
+
+    database DBTest #00BEF2 {
+        card Departments
+        card Employees
+        card Jobs
+    }
+
+    package "Blob Storage"{
+        map filetest{
+            avro => csv
+        }
+    }
+
+    node "Container Instance"{
+        [apiTest.py]
+    }
+}
+
+
+user -> [apiTest.py]: http Request
+[apiTest.py] -> Departments: overwrite
+[apiTest.py] -> Employees: overwrite 
+[apiTest.py] -> Jobs: overwrite 
+[apiTest.py] --> filetest: read/write file
+Departments .> Employees
+Jobs ..> Employees
 @enduml
